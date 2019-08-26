@@ -1,0 +1,19 @@
+{
+  "name": "registration-server",
+  "version": "1.0.0",
+  "description": "Creates and retrieves user registration info",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ECWireless/ml-registration-server.git"
+  },
+  "author": "Elliott Conway",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ECWireless/ml-registration-server/issues"
+  },
+  "homepage": "https://github.com/ECWireless/ml-registration-server#readme"
+}
