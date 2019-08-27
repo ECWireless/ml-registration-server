@@ -78,7 +78,7 @@ app.use('/graphql', graphqlHttp({
 }));
 
 mongoose.connect(`
-	mongodb+srv://Elliott:m5AXhU819PZZCKiR@registration-details-kfatx.gcp.mongodb.net/ml-registration?retryWrites=true&w=majority
+	mongodb+srv://${process.env.MONGO_USER}:${process.env.MONGO_PASSWORD}R@registration-details-kfatx.gcp.mongodb.net/ml-registration?retryWrites=true&w=majority
 `)
 .then(() => {
 	app.listen(port);
