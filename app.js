@@ -1,19 +1,21 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 
-const app = express();
-
 const graphqlHttp = require('express-graphql');
 const { buildSchema } = require('graphql');
 const mongoose = require('mongoose');
+const bcrypt = require('bcryptjs');
 
 // Models
 const Form = require('./models/form');
+const User = require('./models/user');
 
 let port = process.env.PORT;
 if (port == null || port == "") {
   port = 8000;
 }
+
+const app = express();
 
 app.use(bodyParser.json());
 
@@ -22,13 +24,24 @@ app.get('/', (req, res) => {
 });
 
 app.use('/graphql', graphqlHttp({
-    schema: buildSchema(`
+	schema: buildSchema(`
+		type User {
+			_id: ID!
+			username: String!
+			password: String
+		}
+
         type Form {
             _id: ID!
             name: String!
             phoneNumber: String!
             email: String!
-        }
+		}
+		
+		input UserInput {
+			username: String!
+			password: String!
+		}
 
         input FormInput {
             name: String!
@@ -37,11 +50,12 @@ app.use('/graphql', graphqlHttp({
         }
 
         type RootQuery {
-            users: [String!]
+            users: [User!]!
             forms: [Form!]!
         }
         type RootMutation {
-            createForm(formInput: FormInput): Form
+			createForm(formInput: FormInput): Form
+			createUser(userInput: UserInput): User
         }
         schema {
             query: RootQuery
@@ -52,8 +66,33 @@ app.use('/graphql', graphqlHttp({
         users: () => {
 			return ['Keith Parish', 'Joe Leachko'];
 		},
+		createUser: args => {
+			return bcrypt
+				.hash(args.userInput.password, 12)
+				.then(hashedPassword => {
+					const user = new User({
+						username: args.userInput.username,
+						password: hashedPassword
+					});
+					return user.save();
+				})
+				.then(result => {
+					return { ...result._doc };
+				})
+				.catch(err => {
+					throw err;
+				});
+		},
         forms: () => {
-            return forms;
+			return Form.find()
+				.then(forms => {
+					return forms.map(form => {
+						return { ... form._doc }
+					});
+				})
+				.catch(err => {
+					throw err;
+				})
         },
         createForm: (args) => {
 			const form = new Form({
