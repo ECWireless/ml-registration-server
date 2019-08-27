@@ -1,9 +1,11 @@
+const functions = require('firebase-functions');
+
 const express = require('express');
+const app = express();
+
 const bodyParser = require('body-parser');
 const graphqlHttp = require('express-graphql');
 const { buildSchema } = require('graphql');
-
-const app = express();
 
 app.use(bodyParser.json());
 
@@ -13,11 +15,9 @@ app.use('/graphql', graphqlHttp({
             users: [String!]
             forms: [String!]
         }
-
         type RootMutation {
             createUser(name: String): String
         }
-
         schema {
             query: RootQuery
             mutation: RootMutation
@@ -38,4 +38,4 @@ app.use('/graphql', graphqlHttp({
     graphiql: true
 }));
 
-app.listen(3000);
+exports.api = functions.https.onRequest(app);
