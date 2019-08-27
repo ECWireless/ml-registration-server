@@ -3,18 +3,21 @@ const bodyParser = require('body-parser');
 
 const app = express();
 
-const { buildSchema } = require('graphql');
-const graphqlHttp = require('express-graphql');
+// const { buildSchema } = require('graphql');
+// const graphqlHttp = require('express-graphql');
 
-const PORT = process.env.PORT || 5000
-
+let port = process.env.PORT;
+if (port == null || port == "") {
+  port = 8000;
+}
 
 app.use(bodyParser.json());
 
 app.get('/', (req, res) => {
     res.send('Hello World!');
-  });
+});
 
+app.listen(port);
 
 // Arrays
 
