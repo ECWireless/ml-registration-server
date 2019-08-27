@@ -3,8 +3,12 @@ const bodyParser = require('body-parser');
 
 const app = express();
 
-const { buildSchema } = require('graphql');
 const graphqlHttp = require('express-graphql');
+const { buildSchema } = require('graphql');
+const mongoose = require('mongoose');
+
+// Models
+const Form = require('./models/form');
 
 let port = process.env.PORT;
 if (port == null || port == "") {
@@ -14,12 +18,8 @@ if (port == null || port == "") {
 app.use(bodyParser.json());
 
 app.get('/', (req, res) => {
-    res.send('Hello World!');
+    res.send("Visit '/graphql'");
 });
-
-// Arrays
-
-let forms = [];
 
 app.use('/graphql', graphqlHttp({
     schema: buildSchema(`
@@ -49,22 +49,40 @@ app.use('/graphql', graphqlHttp({
         }
     `),
     rootValue: {
+        users: () => {
+			return ['Keith Parish', 'Joe Leachko'];
+		},
         forms: () => {
             return forms;
         },
         createForm: (args) => {
-            const form = {
-                _id: Math.random().toString(),
-                name: args.formInput.name,
+			const form = new Form({
+				name: args.formInput.name,
                 phoneNumber: args.formInput.phoneNumber,
                 email: args.formInput.email
-            }
-            forms.push(form);
-            console.log(forms)
-            return form;
+			})
+			
+			return form
+				.save()
+				.then(result =>{
+					console.log(result);
+					return {...result._doc};
+				})
+				.catch(err => {
+					console.log(err);
+					throw err;
+				});
         }
     },
     graphiql: true
 }));
 
-app.listen(port);
+mongoose.connect(`
+	mongodb+srv://Elliott:m5AXhU819PZZCKiR@registration-details-kfatx.gcp.mongodb.net/ml-registration?retryWrites=true&w=majority
+`)
+.then(() => {
+	app.listen(port);
+})
+.catch(err => {
+	console.log(err);
+})

@@ -2,7 +2,7 @@
   "name": "ml-registration-form",
   "description": "Server for the registration form",
   "scripts": {
-    "start": "node app.js"
+    "start": "nodemon app.js"
   },
   "engines": {
     "node": "8"

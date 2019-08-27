@@ -1,0 +1,7 @@
+{
+    "env": {
+        "MONGO_USER": "Elliott",
+        "MONGO_PASSWORD": "m5AXhU819PZZCKiR",
+        "MONGO_DB": "ml-registration"
+    }
+}
