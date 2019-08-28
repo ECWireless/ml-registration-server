@@ -35,7 +35,7 @@ app.use('/graphql', graphqlHttp({
             _id: ID!
             name: String!
             phoneNumber: String!
-            email: String!
+			email: String!
 		}
 		
 		input UserInput {
@@ -64,24 +64,36 @@ app.use('/graphql', graphqlHttp({
     `),
     rootValue: {
         users: () => {
-			return ['Keith Parish', 'Joe Leachko'];
-		},
-		createUser: args => {
-			return bcrypt
-				.hash(args.userInput.password, 12)
-				.then(hashedPassword => {
-					const user = new User({
-						username: args.userInput.username,
-						password: hashedPassword
+			return User.find()
+				.then(users => {
+					return users.map(user => {
+						return { ... user._doc, password: null }
 					});
-					return user.save();
-				})
-				.then(result => {
-					return { ...result._doc };
 				})
 				.catch(err => {
 					throw err;
+				})
+		},
+		createUser: args => {
+			return User.findOne({ username: args.userInput.username }).then(user => {
+				if (user) {
+					throw new Error('User exists already!');
+				}
+				return bcrypt.hash(args.userInput.password, 12)
+			})
+			.then(hashedPassword => {
+				const user = new User({
+					username: args.userInput.username,
+					password: hashedPassword
 				});
+				return user.save();
+			})
+			.then(result => {
+				return { ...result._doc, password: null };
+			})
+			.catch(err => {
+				throw err;
+			});
 		},
         forms: () => {
 			return Form.find()
@@ -92,20 +104,34 @@ app.use('/graphql', graphqlHttp({
 				})
 				.catch(err => {
 					throw err;
-				})
+				});
         },
         createForm: (args) => {
 			const form = new Form({
 				name: args.formInput.name,
                 phoneNumber: args.formInput.phoneNumber,
-                email: args.formInput.email
+				email: args.formInput.email,
+				creator: '5d65ba32c4d3e1a565b3d4e0'
 			})
-			
+
+			let createdForm;
+
 			return form
 				.save()
 				.then(result =>{
-					console.log(result);
-					return {...result._doc};
+					createdForm = {...result._doc};
+					return User.findById('5d65ba32c4d3e1a565b3d4e0');
+				})
+				.then(user => {
+					if (!user) {
+						throw new Error('User not found!');
+					}
+					console.log(user)
+					user.createdForm.push(form);
+					return user.save();
+				})
+				.then(result => {
+					return createdForm;
 				})
 				.catch(err => {
 					console.log(err);
