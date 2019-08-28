@@ -5,7 +5,7 @@ module.exports = buildSchema(`
         _id: ID!
         username: String!
         password: String
-        createdForm: Form
+        createdForm: Form!
     }
 
     type Form {
