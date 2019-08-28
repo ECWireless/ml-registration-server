@@ -16,11 +16,7 @@ const app = express();
 
 app.use(bodyParser.json());
 
-app.get('/', (req, res) => {
-    res.send("Type '/graphql' at the end of the URL.");
-});
-
-app.use('/graphql', graphqlHttp({
+app.use('/', graphqlHttp({
 	schema: graphQlSchema,
     rootValue: graphQlResolvers,
     graphiql: true
