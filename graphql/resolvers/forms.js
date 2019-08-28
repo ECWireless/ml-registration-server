@@ -7,11 +7,10 @@ const { transformForm } = require('./merge');
 
 module.exports = {
     forms: async (req) => {
-        if (!req.isAuth) {
-            throw new Error('Unauthenticated!');
-        }
-
         try {
+            if (!req.isAuth) {
+                throw new Error('Unauthenticated!');
+            }
             const forms = await Form.find()
             return forms.map(form => {
                 return transformForm(form);
@@ -21,11 +20,11 @@ module.exports = {
         }
     },
     createForm: async (args, req) => {
-        if (!req.isAuth) {
-            throw new Error('Unauthenticated!');
-        }
-
         try {
+            if (!req.isAuth) {
+                throw new Error('Unauthenticated!');
+            }
+
             const existingForm = await Form.findOne({ name: args.formInput.name })
                 
             if (existingForm) {
@@ -36,7 +35,7 @@ module.exports = {
                 name: args.formInput.name,
                 phoneNumber: args.formInput.phoneNumber,
                 email: args.formInput.email,
-                creator: '5d66a1d04e63bc196da98f97'
+                creator: req.userId
             })
 
             let createdForm;
@@ -44,7 +43,7 @@ module.exports = {
             const result = await form.save()
             createdForm = transformForm(result);
 
-            const creator = await User.findById('5d66a1d04e63bc196da98f97');
+            const creator = await User.findById(req.userId);
 
             if (!creator) {
                 throw new Error('User not found!');
