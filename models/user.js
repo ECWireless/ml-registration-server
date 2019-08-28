@@ -11,12 +11,10 @@ const userSchema = new Schema({
         type: String,
         require: true
     },
-    createdForm: [
-        {
-            type: Schema.Types.ObjectId,
-            ref: 'Form'
-        }
-    ]
+    createdForm: {
+        type: Schema.Types.ObjectId,
+        ref: 'Form'
+    }
 });
 
 module.exports = mongoose.model('User', userSchema);

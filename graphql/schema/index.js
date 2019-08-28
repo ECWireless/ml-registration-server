@@ -5,7 +5,7 @@ module.exports = buildSchema(`
         _id: ID!
         username: String!
         password: String
-        createdForms: [Form!]
+        createdForm: Form
     }
 
     type Form {
@@ -14,6 +14,8 @@ module.exports = buildSchema(`
         phoneNumber: String!
         email: String!
         creator: User!
+        createdAt: String!
+        updatedAt: String!
     }
 
     input UserInput {
@@ -32,8 +34,9 @@ module.exports = buildSchema(`
         forms: [Form!]!
     }
     type RootMutation {
-        createForm(formInput: FormInput): Form
         createUser(userInput: UserInput): User
+        createForm(formInput: FormInput): Form
+        deleteForm(formId: ID!): Form
     }
     schema {
         query: RootQuery

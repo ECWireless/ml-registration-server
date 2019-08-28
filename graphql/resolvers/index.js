@@ -5,16 +5,13 @@ const Form = require('../../models/form');
 const User = require('../../models/user');
 
 // Helpers
-const forms = async formIds => {
+const form = async formId => {
     try {
-        const forms = await Form.find({ _id: {$in: formIds }})
-        forms.map(form => {
-            return {
-                ...form._doc,
-                creator: user.bind(this, form.creator)
-            };
-        });
-        return forms;
+        const foundForm = await Form.findById(formId)
+        return {
+            ...foundForm._doc,
+            creator: user.bind(this, foundForm.creator)
+        };
     } catch (err) {
         throw err;
     }
@@ -25,20 +22,23 @@ const user = async userId => {
         const user = await User.findById(userId)
         return {
             ...user._doc,
-            createdForms: forms.bind(this, user._doc.createdForm)
+            createdForm: form.bind(this, user._doc.createdForm)
         };
     } catch (err) {
         throw err;
     }
-	
 }
 
 module.exports = {
     users: async () => {
         try {
             const users = await User.find()
-            return users.map(user => {
-                return { ... user._doc, password: null }
+            return users.map(queryUser => {
+                return {
+                    ... queryUser._doc,
+                    password: null,
+                    createdForm: form.bind(this, queryUser._doc.createdForm)
+                }
             });
         } catch (err) {
             throw err;
@@ -56,7 +56,8 @@ module.exports = {
 
             const user = new User({
                 username: args.userInput.username,
-                password: hashedPassword
+                password: hashedPassword,
+                createdForm: null
             });
             
             const result = await user.save();
@@ -70,7 +71,12 @@ module.exports = {
         try {
             const forms = await Form.find()
             return forms.map(form => {
-                return { ... form._doc, creator: user.bind(this, form._doc.creator) }
+                return {
+                    ... form._doc,
+                    creator: user.bind(this, form._doc.creator),
+                    createdAt: new Date(form._doc.createdAt).toISOString(),
+                    updatedAt: new Date(form._doc.updatedAt).toISOString()
+                }
             });
         } catch (err) {
             throw err;
@@ -88,7 +94,7 @@ module.exports = {
                 name: args.formInput.name,
                 phoneNumber: args.formInput.phoneNumber,
                 email: args.formInput.email,
-                creator: '5d65ba32c4d3e1a565b3d4e0'
+                creator: '5d66a1d04e63bc196da98f97'
             })
 
             let createdForm;
@@ -97,21 +103,38 @@ module.exports = {
             .save()
             createdForm = {
                 ...result._doc,
-                creator: user.bind(this, result._doc.creator)
+                creator: user.bind(this, result._doc.creator),
+                createdAt: new Date(form._doc.createdAt).toISOString(),
+                updatedAt: new Date(form._doc.updatedAt).toISOString()
             };
 
-            const creator = await User.findById('5d65ba32c4d3e1a565b3d4e0');
+            const creator = await User.findById('5d66a1d04e63bc196da98f97');
 
             if (!creator) {
                 throw new Error('User not found!');
             }
 
-            creator.createdForm.push(form);
+            creator.createdForm = form;
 
             await creator.save();
             return createdForm;
         } catch (err) {
             throw err;
+        }
+    },
+    deleteForm: async args => {
+        try {
+            const form = await Form.findById(args.formId);
+            const spreadForms = {
+                ...form._doc,
+                creator: user.bind(this, form._doc.creator)
+            }
+            console.log(spreadForms)
+            await Form.deleteOne({_id: args.formId});
+
+            return spreadForms;
+        } catch (err) {
+
         }
     }
 }

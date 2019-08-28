@@ -7,11 +7,6 @@ const mongoose = require('mongoose');
 const graphQlSchema = require('./graphql/schema');
 const graphQlResolvers = require('./graphql/resolvers');
 
-
-// Models
-const Form = require('./models/form');
-const User = require('./models/user');
-
 let port = process.env.PORT;
 if (port == null || port == "") {
   port = 8000;
