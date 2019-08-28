@@ -7,6 +7,8 @@ const mongoose = require('mongoose');
 const graphQlSchema = require('./graphql/schema');
 const graphQlResolvers = require('./graphql/resolvers');
 
+const isAuth = require('./middleware/is-auth');
+
 let port = process.env.PORT;
 if (port == null || port == "") {
   port = 8000;
@@ -15,6 +17,8 @@ if (port == null || port == "") {
 const app = express();
 
 app.use(bodyParser.json());
+
+app.use(isAuth);
 
 app.use('/', graphqlHttp({
 	schema: graphQlSchema,

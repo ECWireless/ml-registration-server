@@ -8,6 +8,12 @@ module.exports = buildSchema(`
         createdForm: Form!
     }
 
+    type AuthData {
+        userId: ID!
+        token: String!
+        tokenExpiration: Int!
+    }
+
     type Form {
         _id: ID!
         name: String!
@@ -32,6 +38,7 @@ module.exports = buildSchema(`
     type RootQuery {
         users: [User!]!
         forms: [Form!]!
+        login(username: String!, password: String!): AuthData!
     }
     type RootMutation {
         createUser(userInput: UserInput): User

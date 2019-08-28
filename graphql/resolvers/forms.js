@@ -6,7 +6,11 @@ const User = require('../../models/user');
 const { transformForm } = require('./merge');
 
 module.exports = {
-    forms: async () => {
+    forms: async (req) => {
+        if (!req.isAuth) {
+            throw new Error('Unauthenticated!');
+        }
+
         try {
             const forms = await Form.find()
             return forms.map(form => {
@@ -16,7 +20,11 @@ module.exports = {
             throw err;
         }
     },
-    createForm: async args => {
+    createForm: async (args, req) => {
+        if (!req.isAuth) {
+            throw new Error('Unauthenticated!');
+        }
+
         try {
             const existingForm = await Form.findOne({ name: args.formInput.name })
                 
@@ -50,7 +58,11 @@ module.exports = {
             throw err;
         }
     },
-    deleteForm: async args => {
+    deleteForm: async (args, req) => {
+        if (!req.isAuth) {
+            throw new Error('Unauthenticated!');
+        }
+        
         try {
             const form = await Form.findById(args.formId);
             const spreadForms = transformForm(form);
