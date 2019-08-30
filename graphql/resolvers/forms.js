@@ -21,9 +21,9 @@ module.exports = {
     },
     createForm: async (args, req) => {
         try {
-            if (!req.isAuth) {
-                throw new Error('Unauthenticated!');
-            }
+            // if (!req.isAuth) {
+            //     throw new Error('Unauthenticated!');
+            // }
 
             const existingForm = await Form.findOne({ name: args.formInput.name })
                 

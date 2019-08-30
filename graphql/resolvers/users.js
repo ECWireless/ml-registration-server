@@ -6,9 +6,9 @@ const { transformUser } = require('./merge');
 
 module.exports = {
     users: async (req) => {
-        if (!req.isAuth) {
-            throw new Error('Unauthenticated!');
-        }
+        // if (!req.isAuth) {
+        //     throw new Error('Unauthenticated!');
+        // }
 
         try {
             const users = await User.find()
