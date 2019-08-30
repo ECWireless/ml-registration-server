@@ -33,6 +33,7 @@ module.exports = buildSchema(`
         name: String!
         phoneNumber: String!
         email: String!
+        creator: String!
     }
 
     type RootQuery {

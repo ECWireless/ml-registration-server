@@ -35,23 +35,21 @@ module.exports = {
                 name: args.formInput.name,
                 phoneNumber: args.formInput.phoneNumber,
                 email: args.formInput.email,
-                creator: req.userId
+                creator: args.formInput.creator
             })
 
             let createdForm;
 
             const result = await form.save()
+
             createdForm = transformForm(result);
 
-            const creator = await User.findById(req.userId);
+            const creator = await User.findById(args.formInput.creator);
 
             if (!creator) {
                 throw new Error('User not found!');
             }
 
-            creator.createdForm = form;
-
-            await creator.save();
             return createdForm;
         } catch (err) {
             throw err;
