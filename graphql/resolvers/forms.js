@@ -8,9 +8,9 @@ const { transformForm } = require('./merge');
 module.exports = {
     forms: async (req) => {
         try {
-            if (!req.isAuth) {
-                throw new Error('Unauthenticated!');
-            }
+            // if (!req.isAuth) {
+            //     throw new Error('Unauthenticated!');
+            // }
             const forms = await Form.find()
             return forms.map(form => {
                 return transformForm(form);
