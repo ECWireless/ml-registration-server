@@ -15,6 +15,18 @@ const formSchema = new Schema({
         type: String,
         require: true
     },
+    location: {
+        type: String,
+        require: true
+    },
+    day: {
+        type: String,
+        require: true
+    },
+    time: {
+        type: String,
+        require: true
+    },
     creator: {
         type: Schema.Types.ObjectId,
         ref: 'User'

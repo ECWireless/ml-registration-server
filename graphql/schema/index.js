@@ -19,6 +19,9 @@ module.exports = buildSchema(`
         name: String!
         phoneNumber: String!
         email: String!
+        location: String!
+        day: String!
+        time: String!
         creator: User!
         createdAt: String!
         updatedAt: String!
@@ -33,6 +36,9 @@ module.exports = buildSchema(`
         name: String!
         phoneNumber: String!
         email: String!
+        location: String!
+        day: String!
+        time: String!
         creator: String!
     }
 

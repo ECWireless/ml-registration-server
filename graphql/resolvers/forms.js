@@ -35,6 +35,9 @@ module.exports = {
                 name: args.formInput.name,
                 phoneNumber: args.formInput.phoneNumber,
                 email: args.formInput.email,
+                location: args.formInput.location,
+                day: args.formInput.day,
+                time: args.formInput.time,
                 creator: args.formInput.creator
             })
 
